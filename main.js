@@ -35,25 +35,39 @@ class Circle {
     }
 
     update(context, window_width, window_height) {
-        if (this.posX + this.radius > window_width || this.posX - this.radius < 0) {
-            this.dx = -this.dx;
-        }
-        if (this.posY - this.radius < 0 || this.posY + this.radius > window_height) {
-            this.dy = -this.dy;
-        }
-
+        // Actualizamos la posición sumando la velocidad actual
         this.posX += this.dx;
         this.posY += this.dy;
+
+        // Comprobamos si el círculo ha chocado con los bordes y ajustamos su posición y dirección
+        if (this.posX + this.radius >= window_width || this.posX - this.radius <= 0) {
+            this.dx = -this.dx; // Invertimos la dirección horizontal para hacer que rebote
+            // Ajustamos la posición para que el círculo no sobrepase los bordes
+            this.posX = Math.min(window_width - this.radius, Math.max(this.radius, this.posX));
+        }
+        if (this.posY + this.radius >= window_height || this.posY - this.radius <= 0) {
+            this.dy = -this.dy; // Invertimos la dirección vertical para hacer que rebote
+            // Ajustamos la posición para que el círculo no sobrepase los bordes
+            this.posY = Math.min(window_height - this.radius, Math.max(this.radius, this.posY));
+        }
     }
 }
 
-let circles = [
-    new Circle(100, 100, 100, 'green', 'TEC', 4),
-    new Circle(window_width - 100, 100, 100, 'red', 'TEC', 4),
-    new Circle(100, window_height - 100, 100, 'blue', 'TEC', 4),
-    new Circle(window_width - 100, window_height - 100, 100, 'orange', 'TEC', 4),
-    new Circle(window_width / 2, window_height / 2, 100, 'purple', 'TEC', 4)
-];
+let circles = [];
+
+function generateRandomCircles(numCircles) {
+    for (let i = 0; i < numCircles; i++) {
+        let x = Math.random() * window_width;
+        let y = Math.random() * window_height;
+        let radius = Math.random() * 100 + 50; // Radio entre 50 y 150
+        let color = '#' + Math.floor(Math.random()*16777215).toString(16); // Color aleatorio
+        let text = 'TEC'; // Texto constante
+        let velocidad = 4; // Velocidad constante
+        circles.push(new Circle(x, y, radius, color, text, velocidad));
+    }
+}
+
+generateRandomCircles(10); // Genera 10 círculos aleatorios
 
 let updateCircles = function() {
     ctx.clearRect(0, 0, window_width, window_height);
